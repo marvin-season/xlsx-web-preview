@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
-import "./ExcelTablePreview.css";
+import SheetsPreview from "./ExcelPreview";
 
 const ExcelTablePreview = () => {
-  const [sheets, setSheets] = useState([]);
-  const [activeSheetIndex, setActiveSheetIndex] = useState(0);
+  const [sheets, setSheets] = useState<any[]>([]);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
+      const data = new Uint8Array(e.target?.result as any);
       const workbook = XLSX.read(data, { type: "array" });
       const allSheets = workbook.SheetNames.map((sheetName) => {
         const worksheet = workbook.Sheets[sheetName];
@@ -19,7 +18,6 @@ const ExcelTablePreview = () => {
         return { name: sheetName, data: jsonData };
       });
       setSheets(allSheets);
-      setActiveSheetIndex(0); // 默认显示第一个 sheet
     };
 
     reader.readAsArrayBuffer(file);
@@ -27,46 +25,9 @@ const ExcelTablePreview = () => {
 
   return (
     <div>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+      <input type="file" onChange={handleFileUpload} />
 
-      {sheets.length > 0 && (
-        <div>
-          {/* Tab 切换按钮 */}
-          <div className="tabs">
-            {sheets.map((sheet, index) => (
-              <button
-                key={index}
-                className={`tab-button ${index === activeSheetIndex ? "active" : ""}`}
-                onClick={() => setActiveSheetIndex(index)}
-              >
-                {sheet.name}
-              </button>
-            ))}
-          </div>
-
-          {/* 当前激活的 sheet 表格 */}
-          <table className="excel-table">
-            <tbody>
-              {sheets[activeSheetIndex].data.map((row, rowIndex) => {
-                console.log({row});
-                
-                return (
-                  <tr key={rowIndex}>
-                    {row.map((cell, cellIndex) => (
-                      <td
-                        key={cellIndex}
-                        className={"wrap-column"} // 限制第1列的宽度
-                      >
-                        {cell || ""}
-                      </td>
-                    ))}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {sheets.length > 0 && <SheetsPreview sheets={sheets} />}
     </div>
   );
 };
