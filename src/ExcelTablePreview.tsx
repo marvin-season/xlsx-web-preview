@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import "./ExcelTablePreview.css"; // 引入样式文件
+import "./ExcelTablePreview.css";
 
 const ExcelTablePreview = () => {
   const [sheets, setSheets] = useState([]);
@@ -50,7 +50,12 @@ const ExcelTablePreview = () => {
               {sheets[activeSheetIndex].data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {row.map((cell, cellIndex) => (
-                    <td key={cellIndex}>{cell || ""}</td>
+                    <td
+                      key={cellIndex}
+                      className={cellIndex === 0 ? "wrap-column" : ""} // 限制第1列的宽度
+                    >
+                      {cell || ""}
+                    </td>
                   ))}
                 </tr>
               ))}
