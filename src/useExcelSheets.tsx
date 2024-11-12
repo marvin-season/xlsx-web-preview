@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import * as XLSX from "xlsx";
 
-const useExcelSheets = (excelUrl: string) => {
-    const [sheets, setSheets] = useState<any[]>([])
-    const handleExcel = async () => {
-        console.log('useExcel')
-        const response = await fetch(excelUrl)
-        const arrayBuffer = await response.arrayBuffer()
+const useExcelSheets = (file: Blob | null | undefined) => {
+    const [sheets, setSheets] = useState<any[]>([]);
 
+    const extractSheets = useCallback(async () => {
+        if (!file) {
+            setSheets([])
+            return
+        }
+
+        const arrayBuffer = await file.arrayBuffer()
         const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: "array" });
         const allSheets = workbook.SheetNames.map((sheetName) => {
             const worksheet = workbook.Sheets[sheetName];
@@ -15,15 +18,15 @@ const useExcelSheets = (excelUrl: string) => {
             return { name: sheetName, data: jsonData };
         });
         setSheets(allSheets)
-    }
+    }, [file])
 
 
     useEffect(() => {
-        handleExcel()
-    }, [])
+        extractSheets()
+    }, [file])
 
     return {
-        sheets
+        sheets,
     }
 
 }
