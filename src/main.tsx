@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import ExcelPreview from './ExcelPreview'
+import ExcelTablePreview from './ExcelTablePreview'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <>
-      <ExcelPreview />
+      <ExcelTablePreview />
     </>
   </StrictMode>,
 )

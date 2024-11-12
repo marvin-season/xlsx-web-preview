@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import "./ExcelPreview.css"; // 引入样式文件
+import "./ExcelTablePreview.css"; // 引入样式文件
 
 const ExcelTablePreview = () => {
   const [sheets, setSheets] = useState([]);
+  const [activeSheetIndex, setActiveSheetIndex] = useState(0);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -18,6 +19,7 @@ const ExcelTablePreview = () => {
         return { name: sheetName, data: jsonData };
       });
       setSheets(allSheets);
+      setActiveSheetIndex(0); // 默认显示第一个 sheet
     };
 
     reader.readAsArrayBuffer(file);
@@ -26,12 +28,26 @@ const ExcelTablePreview = () => {
   return (
     <div>
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      {sheets.map((sheet, sheetIndex) => (
-        <div key={sheetIndex}>
-          <h2>{sheet.name}</h2>
+
+      {sheets.length > 0 && (
+        <div>
+          {/* Tab 切换按钮 */}
+          <div className="tabs">
+            {sheets.map((sheet, index) => (
+              <button
+                key={index}
+                className={`tab-button ${index === activeSheetIndex ? "active" : ""}`}
+                onClick={() => setActiveSheetIndex(index)}
+              >
+                {sheet.name}
+              </button>
+            ))}
+          </div>
+
+          {/* 当前激活的 sheet 表格 */}
           <table className="excel-table">
             <tbody>
-              {sheet.data.map((row, rowIndex) => (
+              {sheets[activeSheetIndex].data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   {row.map((cell, cellIndex) => (
                     <td key={cellIndex}>{cell || ""}</td>
@@ -41,7 +57,7 @@ const ExcelTablePreview = () => {
             </tbody>
           </table>
         </div>
-      ))}
+      )}
     </div>
   );
 };
