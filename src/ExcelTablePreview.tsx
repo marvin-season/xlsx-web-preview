@@ -15,7 +15,7 @@ const ExcelTablePreview = () => {
       const workbook = XLSX.read(data, { type: "array" });
       const allSheets = workbook.SheetNames.map((sheetName) => {
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: true });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: "" });
         return { name: sheetName, data: jsonData };
       });
       setSheets(allSheets);
@@ -47,18 +47,22 @@ const ExcelTablePreview = () => {
           {/* 当前激活的 sheet 表格 */}
           <table className="excel-table">
             <tbody>
-              {sheets[activeSheetIndex].data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => (
-                    <td
-                      key={cellIndex}
-                      className={cellIndex === 0 ? "wrap-column" : ""} // 限制第1列的宽度
-                    >
-                      {cell || ""}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {sheets[activeSheetIndex].data.map((row, rowIndex) => {
+                console.log({row});
+                
+                return (
+                  <tr key={rowIndex}>
+                    {row.map((cell, cellIndex) => (
+                      <td
+                        key={cellIndex}
+                        className={"wrap-column"} // 限制第1列的宽度
+                      >
+                        {cell || ""}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
