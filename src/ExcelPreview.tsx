@@ -12,24 +12,27 @@ const SheetPreview: FC<{
     sheet: Sheet;
 }> = ({ sheet }) => {
     return <>
-        {
-            sheet.data.map((row, rowIndex) => {
-                return (
-                    <tr key={rowIndex}>
-                        {row.map((cell, cellIndex) => (
-                            <td
-                                key={cellIndex}
-                                className={"wrap-column"} // 限制第1列的宽度
-                            >
-                                {cell || ""}
-                            </td>
-                        ))}
-                    </tr>
-                )
-            })
-        }
-
-    </>;
+        <table className="excel-table">
+            <tbody>
+                {
+                    sheet.data.map((row, rowIndex) => {
+                        return (
+                            <tr key={rowIndex}>
+                                {row.map((cell, cellIndex) => (
+                                    <td
+                                        key={cellIndex}
+                                        className={"wrap-column"} // 限制第1列的宽度
+                                    >
+                                        {cell || ""}
+                                    </td>
+                                ))}
+                            </tr>
+                        )
+                    })
+                }
+            </tbody>
+        </table>
+    </>
 };
 
 
