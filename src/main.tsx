@@ -1,11 +1,11 @@
-import { StrictMode, useEffect, useState } from 'react'
+import { StrictMode, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import useExcelSheets from './useExcelSheets'
 import SheetsPreview from './SheetPreview'
 const App = () => {
 
   const [file, setFile] = useState<Blob | null | undefined>(null);
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { sheets } = useExcelSheets(file);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,8 +24,11 @@ const App = () => {
     }}>加载示例</button>
     <button onClick={() => {
       setFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }}>清空</button>
-    <input type="file" onChange={handleFileChange} />
+    <input ref={fileInputRef} type="file" onChange={handleFileChange} />
     <br />
     {
       !sheets.length ? <div>no file</div> : <SheetsPreview sheets={sheets} />
