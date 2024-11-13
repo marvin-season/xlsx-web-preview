@@ -1,5 +1,5 @@
 
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import "./index.css";
 
 
@@ -11,11 +11,22 @@ type Sheet = {
 const SheetPreview: FC<{
     sheet: Sheet;
 }> = ({ sheet }) => {
-    return <>
+    // sheet.data is so large, so we need to render the table dynamically.
+
+    const [visibleRange, setVisibleRange] = useState({
+        offset: 0,
+        limit: 10,
+    })
+
+    const dataRows = useMemo(() => {
+        return sheet.data.slice(visibleRange.offset, visibleRange.offset + visibleRange.limit)
+    }, [sheet.data, visibleRange])
+
+    return <div style={{ height: '300px', overflowY: 'scroll' }}>
         <table className="excel-table">
             <tbody>
                 {
-                    sheet.data.map((row, rowIndex) => {
+                    dataRows.map((row, rowIndex) => {
                         return (
                             <tr key={rowIndex}>
                                 {row.map((cell, cellIndex) => (
@@ -32,7 +43,7 @@ const SheetPreview: FC<{
                 }
             </tbody>
         </table>
-    </>
+    </div>
 };
 
 

@@ -14,7 +14,7 @@ const App = () => {
   }
 
   const loadDemo = async () => {
-    const response = await fetch('/demo.xlsx')
+    const response = await fetch('/demo.csv')
     return response.blob()
   }
 
